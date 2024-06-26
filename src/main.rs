@@ -1,10 +1,20 @@
+use std::env;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::io::stdin;
 
 fn main() -> io::Result<()> {
-    let input_file_path = "input.bin";
-    let output_file_path = "output.bin";
+    // Collect command-line arguments
+    let args: Vec<String> = env::args().collect();
+
+    // Check for correct number of arguments
+    if args.len() != 3 {
+        eprintln!("Usage: {} <input file> <output file>", args[0]);
+        std::process::exit(1);
+    }
+
+    let input_file_path = &args[1];
+    let output_file_path = &args[2];
 
     // Prompt the user for the element size
     println!("Enter the element size (in bytes):");
