@@ -1,18 +1,21 @@
 use std::fs::File;
 use std::io::{self, Read, Write};
-use std::mem::size_of;
+use std::io::stdin;
 
 fn main() -> io::Result<()> {
     let input_file_path = "input.bin";
     let output_file_path = "output.bin";
 
+    // Prompt the user for the element size
+    println!("Enter the element size (in bytes):");
+    let mut input = String::new();
+    stdin().read_line(&mut input)?;
+    let element_size: usize = input.trim().parse().expect("Invalid input");
+
     // Read the input file
     let mut input_file = File::open(input_file_path)?;
     let mut buffer = Vec::new();
     input_file.read_to_end(&mut buffer)?;
-
-    // Determine the size of the elements (e.g., 32-bit integers)
-    let element_size = size_of::<u16>();
 
     // Reverse endianness of each element
     for chunk in buffer.chunks_exact_mut(element_size) {
@@ -32,7 +35,7 @@ fn main() -> io::Result<()> {
                 value = value.swap_bytes();
                 chunk.copy_from_slice(&value.to_le_bytes());
             }
-            _ => unimplemented!("Only 16, 32, and 64-bit elements are supported."),
+            _ => panic!("Unsupported element size."),
         }
     }
 
